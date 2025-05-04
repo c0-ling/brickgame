@@ -1,43 +1,49 @@
-# Example file showing a circle moving on screen
 import pygame
-
-# pygame setup
+import random , sys
+from object import*
 pygame.init()
-screen = pygame.display.set_mode((1280, 720))
+SCREEN_WEIGHT = 800
+SCREEN_HEIGHT = 600
+score = 0
+screen = pygame.display.set_mode((SCREEN_WEIGHT,SCREEN_HEIGHT))
 clock = pygame.time.Clock()
 running = True
+SCREEN_COLOR = 16, 33, 89
 dt = 0
-
-player_pos = pygame.Vector2(screen.get_width() / 2, screen.get_height() / 2)
-
+platform_x = 350
+platform_y = 550
+ball_x = platform_x+50
+ball_y = platform_y-20
+brick_x = 10
+brick_y = 10
+pygame.display.set_caption("Bricks Game")
+pygame.display.update()
+pygame.event.set_grab(True)
+pygame.mouse.set_visible(False)
+platform = Platform(screen, (255, 255, 255), (platform_x,platform_y, 120, 20))
+ball = Ball(screen, (255, 0, 0), [ball_x, ball_y], 10)
+brick = Brick(screen, (0, 255, 0), (brick_x, brick_y, 80, 30))
+timer = Counter(screen)
 while running:
-    # poll for events
-    # pygame.QUIT event means the user clicked X to close your window
+    clock.tick(60)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-
-    # fill the screen with a color to wipe away anything from last frame
-    screen.fill("purple")
-
-    pygame.draw.circle(screen, "red", player_pos, 40)
-
+    screen.fill(SCREEN_COLOR)
     keys = pygame.key.get_pressed()
-    if keys[pygame.K_w]:
-        player_pos.y -= 300 * dt
-    if keys[pygame.K_s]:
-        player_pos.y += 300 * dt
-    if keys[pygame.K_a]:
-        player_pos.x -= 300 * dt
-    if keys[pygame.K_d]:
-        player_pos.x += 300 * dt
-
-    # flip() the display to put your work on screen
-    pygame.display.flip()
-
-    # limits FPS to 60
-    # dt is delta time in seconds since last frame, used for framerate-
-    # independent physics.
-    dt = clock.tick(60) / 1000
-
+    if keys[pygame.K_LEFT]:
+        platform.move(-10)
+    if keys[pygame.K_RIGHT]:
+        platform.move(10)
+    if keys[pygame.K_BACKSPACE]:
+        pygame.quit()
+        sys.exit()
+    ball.draw()
+    brick.draw()
+    platform.draw()
+    ball.move()
+    ball.collision_check(platform.rect)
+    ball.collision_check(brick.rect)
+    timer.timer(screen)
+    pygame.display.update() 
 pygame.quit()
