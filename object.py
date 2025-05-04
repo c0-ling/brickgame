@@ -5,6 +5,7 @@ class Ball():
         self.color = color
         self.center = center
         self.radius = radius
+        self.rect = pygame.Rect(self.center[0] - self.radius,self.center[1] - self.radius,self.radius * 2,self.radius * 2)
         self.dx = 5
         self.dy = -5
     def draw(self):
@@ -20,10 +21,10 @@ class Ball():
             self.dx *=0
             self.dy *=0
     def collision_check(self,rect):
-        ball_rect = pygame.Rect(self.center[0] - self.radius,self.center[1] - self.radius,self.radius * 2,self.radius * 2)
+        self.rect = pygame.Rect(self.center[0] - self.radius,self.center[1] - self.radius,self.radius * 2,self.radius * 2)
 #Rect(left, top, width, height) 
 #circle(surface, color, center, radius) -> Rect
-        if ball_rect.colliderect(rect):
+        if self.rect.colliderect(rect):
             dx = (self.center[0] - rect.centerx) / rect.width
             dy = (self.center[1] - rect.centery) / rect.height
             if abs(dx) > abs(dy):
@@ -49,19 +50,16 @@ class Brick():
         self.surface = surface
         self.color = color
         self.rect = pygame.Rect(rect)
+        self.exist = True
     def draw(self):
-        pygame.draw.rect(self.surface,self.color,self.rect)
+        if self.exist==True:
+            pygame.draw.rect(self.surface,self.color,self.rect)
     def collision_gone(self,rect):
         brick_rect=pygame.Rect(self.rect)
         if brick_rect.colliderect(rect):
-            score += 10
+            self.exist = False
     def bricks_color(self):
         pass
-    def every_brick(self):
-        bricks = []
-        for i in range(9):
-            for j in range(4):
-                pass
 
 class Counter():
     def __init__(self,screen):
